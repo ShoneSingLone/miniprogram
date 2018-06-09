@@ -9,7 +9,8 @@ Page({
     temp: "",
     weather: "",
     weatherBackground: "",
-    currentCity:"上海"
+    currentCity:"上海",
+    forecast:[]
   },
   onLoad() {
     this.getNow();
@@ -50,6 +51,7 @@ Page({
           temp: result.now.temp + "°",
           weather: nowWeather,
           weatherBackground: "/images/" + result.now.weather + "-bg.png",
+          forecast: result.forecast,
           message: result.now.temp + "°" +
             nowWeather +
             "/images/" + result.now.weather + "-bg.png"
