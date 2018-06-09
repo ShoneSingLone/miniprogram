@@ -1,5 +1,10 @@
 <view class="weather-wrapper">
   <view class="temp">{{temp}}</view>
   <view class="weather">{{weather}}</view>
-  <image class="weather-bg" src="/images/sunny-bg.png" mode="scaleToFill"></image>
+  <view class='current-city'>{{currentCity}}</view>
+  <view class="timetips">
+    <image class="timetips-icon" src="/images/time-icon.png"/>
+    <view class="timetips-text">未来24小时的天气变化</view>
+  </view>
+  <image class="weather-bg" src="{{weatherBackground}}" mode="scaleToFill"></image>
 </view>
