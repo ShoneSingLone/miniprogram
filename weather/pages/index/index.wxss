@@ -42,6 +42,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 40rpx;
+  margin-bottom: 40rpx;
 }
 
 .timetips-icon {
@@ -56,11 +57,40 @@
   opacity: 0.5;
 }
 
+/* 
 .forecast-list{
   display:flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-}
-.forecast-item{
+} */
 
+.forecast-list {
+  display: flex;
+  /* flex-flow: row nowrap; */
+}
+
+.forecast-item {
+  /* outline: 1rpx solid blueviolet; *//* border: 1rpx solid blue; */
+  display: flex;
+  flex-shrink: 0;
+  width: 140rpx;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+.forecast-time {
+  font-size: 30rpx;
+  line-height: 42rpx;
+}
+
+.forecast-weather {
+  margin-top: 50rpx;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.forecast-temp {
+  margin-top: 46rpx;
+  width: 60rpx;
+  height: 42rpx;
 }

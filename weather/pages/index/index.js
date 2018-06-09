@@ -9,8 +9,8 @@ Page({
     temp: "",
     weather: "",
     weatherBackground: "",
-    currentCity:"上海",
-    forecast:[]
+    currentCity: "上海",
+    hourlyWeather: []
   },
   onLoad() {
     this.getNow();
@@ -45,16 +45,25 @@ Page({
           'snow': '#aae1fc'
         }
 
-        let nowWeather = weatherMap[result.now.weather];
+        let
+          nowWeather = weatherMap[result.now.weather],
+          nowHour = new Date().getHours(),
+          hourlyWeather = [],
+          forecast = result.forecast;
 
+        for (let i = 0; i < 24; i += 3) {
+          hourlyWeather.push({
+            time: (i + nowHour) % 24 + "时",
+            src: '/images/' + forecast[i / 3].weather + '-icon.png',
+            temp: forecast[i / 3].temp + '°'
+          })
+        }
+        hourlyWeather[0].time = "现在";
         this.setData({
           temp: result.now.temp + "°",
           weather: nowWeather,
           weatherBackground: "/images/" + result.now.weather + "-bg.png",
-          forecast: result.forecast,
-          message: result.now.temp + "°" +
-            nowWeather +
-            "/images/" + result.now.weather + "-bg.png"
+          hourlyWeather
         });
         wx.setNavigationBarColor({
           frontColor: '#000000',
