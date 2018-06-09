@@ -1,3 +1,5 @@
-<view class="container">
-  <view class="row">Hello</view>
+<view class="weather-wrapper">
+  <view class="temp">{{temp}}</view>
+  <view class="weather">{{weather}}</view>
+  <image class="weather-bg" src="/images/sunny-bg.png" mode="scaleToFill"></image>
 </view>
