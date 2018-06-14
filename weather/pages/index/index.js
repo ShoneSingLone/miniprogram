@@ -10,13 +10,17 @@ Page({
     weather: "",
     weatherBackground: "",
     currentCity: "上海",
-    hourlyWeather: []
+    hourlyWeather: [],
+    todayTemp: "",
+    todayDate: ""
   },
   onLoad() {
     this.getNow();
+
   },
   onPullDownRefresh() {
     this.getNow(true);
+
   },
   getNow(isStop) {
     console.time("start");
@@ -70,6 +74,9 @@ Page({
           backgroundColor: weatherColorMap[result.now.weather],
         });
 
+        /**setToday */
+        this.setToday(result);
+
         console.timeEnd("start");
       },
       complete: () => {
@@ -80,6 +87,20 @@ Page({
         return console.log("PullDownRefresh()");
       }
     });
-  }
+  },
+  setToday(result) {
+    let date = new Date()
+    this.setData({
+      todayTemp: `${result.today.minTemp}° - ${result.today.maxTemp}°`,
+      todayDate: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 今天`
+    })
+  },
+  onTapDayWeather() {
+    console.info("onTapDayWeather");
 
+    wx.navigateTo({
+      url: '/pages/list/list',
+    })
+
+  }
 })
