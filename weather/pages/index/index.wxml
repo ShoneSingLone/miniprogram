@@ -1,7 +1,14 @@
 <view class="weather-wrapper">
+  <view class="location-wrapper">
+    <view class="location">
+      <image class="location-icon" src="/images/location-icon.png"></image>
+      <view class="location-text">广州市</view>
+    </view>
+    <view class="location-tips" bindtap="onTapLocation" >点击获取当前位置</view>
+  </view>
   <view class="temp">{{temp}}</view>
   <view class="weather">{{weather}}</view>
-  <view class="current-city">{{currentCity}}</view>
+  <!-- <view class="current-city">{{currentCity}}</view> -->
   <image class="weather-bg" src="{{weatherBackground}}" mode="scaleToFill"></image>
   <view class="day-weather" bindtap="onTapDayWeather">
     <view class="day-text">{{todayDate}}</view>

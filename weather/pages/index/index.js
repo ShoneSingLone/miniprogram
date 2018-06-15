@@ -22,6 +22,13 @@ Page({
     this.getNow(true);
 
   },
+  onTapLocation() {
+    wx.getLocation({
+      success: res => {
+        console.log(res.latitude, res.longitude)
+      }
+    })
+  },
   getNow(isStop) {
     console.time("start");
     wx.request({
