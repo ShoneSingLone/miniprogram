@@ -1,3 +1,5 @@
+const QQMapWX = require('../../libs/qqmap-wx-jssdk.js');
+
 const weatherMap = {
   'sunny': '晴天',
   'cloudy': '多云',
@@ -5,7 +7,7 @@ const weatherMap = {
   'lightrain': '小雨',
   'heavyrain': '大雨',
   'snow': '雪'
-}
+};
 
 const weatherColorMap = {
   'sunny': '#cbeefd',
@@ -14,11 +16,22 @@ const weatherColorMap = {
   'lightrain': '#bdd5e1',
   'heavyrain': '#c5ccd0',
   'snow': '#aae1fc'
-}
+};
 
-const QQMapWX = require('../../libs/qqmap-wx-jssdk.js')
+
+const UNPROMPTED = 0;
+const UNAUTHORIZED = 1;
+const AUTHORIZED = 2;
+
+const UNPROMPTED_TIPS = "点击获取当前位置";
+const UNAUTHORIZED_TIPS = "点击开启位置权限";
+const AUTHORIZED_TIPS = "";
+
 
 Page({
+  /**
+   * 页面的初始数据
+   */
   data: {
     nowTemp: '',
     nowWeather: '',
@@ -27,13 +40,38 @@ Page({
     todayTemp: "",
     todayDate: "",
     city: '广州市',
-    locationTipsText: "点击获取当前位置"
+    locationTipsText: UNPROMPTED_TIPS,
+    locationAuthType: UNPROMPTED
   },
-  onLoad() {
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    console.log("onLoad");
     this.qqmapsdk = new QQMapWX({
       key: 'EAXBZ-33R3X-AA64F-7FIPQ-BY27J-5UF5B'
     })
-    this.getNow()
+    wx.getSetting({
+      success: res => {
+        let auth = res.authSetting['scope.userLocation']
+        let locationAuthType = auth ? AUTHORIZED :
+          (auth === false) ? UNAUTHORIZED : UNPROMPTED
+        let locationTipsText = auth ? AUTHORIZED_TIPS :
+          (auth === false) ? UNAUTHORIZED_TIPS : UNPROMPTED_TIPS
+        this.setData({
+          locationAuthType: locationAuthType,
+          locationTipsText: locationTipsText
+        })
+
+        if (auth)
+          this.getCityAndWeather()
+        else
+          this.getNow() //使用默认城市广州
+      },
+      fail: () => {
+        this.getNow() //使用默认城市广州
+      }
+    });
   },
   onPullDownRefresh() {
     this.getNow(() => {
@@ -99,8 +137,17 @@ Page({
     })
   },
   onTapLocation() {
+    {
+      this.getCityAndWeather()
+    }
+  },
+  getCityAndWeather() {
     wx.getLocation({
       success: res => {
+        this.setData({
+          locationAuthType: AUTHORIZED,
+          locationTipsText: AUTHORIZED_TIPS
+        })
         this.qqmapsdk.reverseGeocoder({
           location: {
             latitude: res.latitude,
@@ -110,12 +157,65 @@ Page({
             let city = res.result.address_component.city
             this.setData({
               city: city,
-              locationTipsText: ""
             })
             this.getNow()
           }
         })
       },
+      fail: () => {
+        this.setData({
+          locationAuthType: UNAUTHORIZED,
+          locationTipsText: UNAUTHORIZED_TIPS
+        })
+      }
     })
+  },
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+    console.log("onReady");
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+    console.log("onShow");
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+    console.log("onHide");
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+    console.log("onUnload");
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+    console.log("onPullDownRefresh");
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+    console.log("onReachBottom");
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+    console.log("onShareAppMessage");
   }
 })
