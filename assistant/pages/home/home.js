@@ -1,7 +1,9 @@
 // pages/home/home.js
 let {
   remotHost
-} = getApp().globalData
+} = getApp().data
+
+
 
 Page({
   /**
@@ -9,6 +11,7 @@ Page({
    */
   data: {
     productList: [], // 商品列表
+    platform: ''
   },
 
   /**

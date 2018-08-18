@@ -1,1 +1,5 @@
 /* pages/trolley/trolley.wxss */
+
+.bg{
+    outline: 1px solid rebeccapurple;
+}

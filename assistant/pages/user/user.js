@@ -1,9 +1,6 @@
 // pages/user/user.js
-let {
-  remotHost,
-  locationAuthType,
-  userInfo
-} = getApp().globalData
+// pages/user/user.js
+let app = getApp()
 
 Page({
 
@@ -11,20 +8,40 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userInfo,
-    locationAuthType
+    userInfo: app.data.userInfo,
+    locationAuthType: app.data.locationAuthType,
+    remotHost: app.data.remotHost
   },
-
+  onTapLogin: function () {
+    console.log('onTaplogin')
+    app.login({
+      success: ({
+        userInfo
+      }) => {
+        this.setData({
+          userInfo,
+          locationAuthType: app.data.locationAuthType
+        })
+      },
+      error: () => {
+        this.setData({
+          locationAuthType: app.data.locationAuthType
+        })
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('remotHost', remotHost)
+    console.log('onLoad')
   },
+
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
+    console.log('onReady')
 
   },
 
@@ -32,6 +49,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    console.log('onShow')
 
   },
 
@@ -39,6 +57,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
+    console.log('onHide')
 
   },
 
@@ -46,6 +65,7 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
+    console.log('onUnload')
 
   },
 
@@ -53,6 +73,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
+    console.log('onPullDownRefresh')
 
   },
 
@@ -60,6 +81,7 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
+    console.log('onReachBottom')
 
   },
 

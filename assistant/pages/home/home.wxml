@@ -1,4 +1,5 @@
-<!--pages/home/home.wxml-->
+<!-- pages/home/home.wxml -->
+<view class='hot-name-text'>{{platform}}</view>
 <image src='/images/bg.png' class='bg'></image>
 <view class='hot-card'>
     <view class='hot-name'>
@@ -15,7 +16,7 @@
     <image class='list-title-line' src='/images/line-black.png'></image>
 </view>
 <view class='product-row' wx:for='{{productList}}' wx:key='id' wx:if='{{index%2 === 1}}'>
-    <navigator class='product-card' wx:for='{{[productList[index], productList[index+1]]}}' wx:key='id' wx:for-index='pindex' wx:for-item='pitem'  catchtap='showDetail'data-url="/pages/detail/detail?id={{pitem.id}}">
+    <navigator class='product-card' wx:for='{{[productList[index], productList[index+1]]}}' wx:key='id' wx:for-index='pindex' wx:for-item='pitem' catchtap='showDetail' data-url="/pages/detail/detail?id={{pitem.id}}">
         <image class='product-image' src='{{pitem.image}}' mode='widthFix'></image>
         <view class='product-name'>{{pitem.name}}</view>
         <view class='product-meta'>
