@@ -35,9 +35,10 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    remotHost: "http://localhost:3000/n/shop",
+    locationAuthType: 0
   }
 })
 
-export const remotHost = "http://localhost:3000/n/shop?query=anything";
 // export const remotHost = "https://shonesinglone.leanapp.cn/";

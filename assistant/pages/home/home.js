@@ -1,7 +1,8 @@
-import {
-  remotHost
-} from '../../app'
 // pages/home/home.js
+let {
+  remotHost
+} = getApp().globalData
+
 Page({
   /**
    * 页面的初始数据
@@ -50,6 +51,15 @@ Page({
           title: '商品数据加载失败',
         })
       }
+    });
+
+  },
+  showDetail(event) {
+    let url = event.currentTarget.dataset.url
+    console.log(url);
+
+    wx.navigateTo({
+      url
     });
 
   },
