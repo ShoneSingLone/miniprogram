@@ -65,7 +65,6 @@ App({
     success,
     error
   }) {
-
     wx.getSetting({
       success: res => {
         if (res.authSetting['scope.userInfo'] === false) {
@@ -121,6 +120,31 @@ App({
           })
           console.log(this.data)
         }
+      }
+    })
+  },
+  doQcloudLogin({
+    success,
+    error
+  }) {
+    // 调用 qcloud 登陆接口
+    qcloud.login({
+      success: result => {
+        if (result) {
+          let userInfo = result
+          success && success({
+            userInfo
+          })
+        } else {
+          // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
+          this.getUserInfo({
+            success,
+            error
+          })
+        }
+      },
+      fail: () => {
+        error && error()
       }
     })
   },
