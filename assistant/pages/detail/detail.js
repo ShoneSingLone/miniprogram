@@ -1,7 +1,5 @@
 // pages/detail/detail.js
-import {
-  remotHost
-} from '../../app'
+let app = getApp()
 
 Page({
 
@@ -20,14 +18,14 @@ Page({
     this.getProduct(options.id)
   },
   getProduct(id) {
-    console.log('remotHost', remotHost);
+    console.log('remotHost', app.data.remotHost);
     console.time("start");
     wx.showLoading({
       title: '商品数据加载中...',
     })
 
     wx.request({
-      url: remotHost + '?id=' + id,
+      url: `${app.data.remotHost}?id=${id}`,
       method: 'POST',
       data: {
         endpoint: 'home',

@@ -1,13 +1,7 @@
 /* pages/user/user.wxss */
 
 .user-card {
-    /* outline: 1rpx solid rebeccapurple; */
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
-    align-items: center;
     margin: 50rpx 27rpx 0;
-    height: 200rpx;
     background: #FFFFFF;
     box-shadow: 0 2rpx 13rpx 5rpx rgba(0, 0, 0, 0.02);
     border-radius: 13rpx;

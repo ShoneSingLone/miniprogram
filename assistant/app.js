@@ -6,7 +6,13 @@ let userInfo
 const UNPROMPTED = 0
 const UNAUTHORIZED = 1
 const AUTHORIZED = 2
+
 App({
+  data: {
+    userInfo,
+    remotHost: "http://localhost:3000/n/shop",
+    locationAuthType: 0
+  },
   onLaunch: function () {
     wx.getSystemInfo({
       success: res => {
@@ -24,24 +30,6 @@ App({
     wx.setStorageSync('logs', logs)
 
     // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              this.data.userInfo = res.userInfo
-              // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-              // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
-            }
-          })
-        }
-      }
-    })
   },
   backup: function () {
     // 展示本地存储能力
@@ -49,11 +37,6 @@ App({
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
     console.log('logs', logs)
-  },
-  data: {
-    userInfo,
-    remotHost: "http://localhost:3000/n/shop",
-    locationAuthType: 0
   },
   getSettings() {
     // 获取用户信息
@@ -82,13 +65,7 @@ App({
     success,
     error
   }) {
-     // 登录
-     wx.login({
-       success: res => {
-         console.log('wx.login',res)
-         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-       }
-     })
+
     wx.getSetting({
       success: res => {
         if (res.authSetting['scope.userInfo'] === false) {
@@ -101,9 +78,48 @@ App({
           })
           error && error()
         } else {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           this.data.locationAuthType = AUTHORIZED
-          console.log(success, this.data)
-          // this.doQcloudLogin({ success, error })
+          wx.showLoading({
+            title: '正在登录...',
+          })
+          wx.getUserInfo({
+            success: res => {
+              // 可以将 res 发送给后台解码出 unionId
+              this.data.userInfo = res.userInfo
+              console.log(this.data.userInfo)
+              // 获取code=>userName，userPwd换取 Token{初次token生成，再次token验证}
+              wx.login({
+                success: ({
+                  errMsg,
+                  code
+                }) => {
+                  console.log('wx.login', errMsg)
+                  // 发送 res.code 到后台换取 openId, sessionKey, unionId
+                  wx.request({
+                    url: this.data.remotHost,
+                    method: 'POST',
+                    data: {
+                      endpoint: 'login',
+                      action: 'getWeChatToken',
+                      code
+                    },
+                    success: res => {
+                      console.log('remote login success', res)
+                      wx.hideLoading()
+                      success && success(this.data.userInfo)
+                    },
+                    fail: res => {
+                      console.log('remote login fail', res)
+                      wx.hideLoading()
+                    }
+                  });
+                }
+              })
+
+            }
+          })
+          console.log(this.data)
         }
       }
     })

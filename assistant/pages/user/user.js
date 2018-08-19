@@ -2,8 +2,9 @@
 // pages/user/user.js
 let app = getApp()
 
-Page({
+console.log('when get app userInfo:', app.data.userInfo)
 
+Page({
   /**
    * 页面的初始数据
    */
@@ -13,18 +14,31 @@ Page({
     remotHost: app.data.remotHost
   },
   onTapLogin: function () {
-    console.log('onTaplogin')
+    console.log('onTaplogin userInfo:', app.data.userInfo)
     app.login({
       success: ({
         userInfo
       }) => {
+        console.log('when login success userInfo:', app.data.userInfo)
         this.setData({
-          userInfo,
+          userInfo: app.data.userInfo,
+          locationAuthType: app.data.locationAuthType
+        })
+        console.log('login success', {
+          userInfo: app.data.userInfo,
           locationAuthType: app.data.locationAuthType
         })
       },
       error: () => {
         this.setData({
+          locationAuthType: app.data.locationAuthType
+        })
+        this.setData({
+          userInfo: app.data.userInfo,
+          locationAuthType: app.data.locationAuthType
+        })
+        console.log('login fail', {
+          userInfo: app.data.userInfo,
           locationAuthType: app.data.locationAuthType
         })
       }
