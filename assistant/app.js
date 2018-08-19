@@ -1,7 +1,6 @@
 //app.js
 
 let self = this
-let userInfo
 
 const UNPROMPTED = 0
 const UNAUTHORIZED = 1
@@ -9,8 +8,8 @@ const AUTHORIZED = 2
 
 App({
   data: {
-    userInfo,
-    remotHost: "http://localhost:3000/n/shop",
+    userInfo: null,
+    remotHost: "",
     locationAuthType: 0
   },
   onLaunch: function () {
@@ -50,11 +49,9 @@ App({
           error && error()
         } else {
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          this.data.locationAuthType = AUTHORIZED
           wx.getUserInfo({
             success: (wxUserInfo) => {
               // 可以将 wxUserInfo 发送给后台解码出 unionId
-              this.data.userInfo = wxUserInfo.userInfo
               console.log('wxUserInfo', wxUserInfo)
               // 获取code=>userName，userPwd换取 Token{初次token生成，再次token验证}
               wx.login({
@@ -62,7 +59,7 @@ App({
                   errMsg,
                   code
                 }) => {
-                  console.log('wx.login', errMsg)
+                  console.log('wx.login.code', code)
                   // 发送 res.code 到后台换取 openId, sessionKey, unionId
                   wx.request({
                     url: this.data.remotHost,
@@ -74,9 +71,29 @@ App({
                       wxUserInfo
                     },
                     success: res => {
-                      console.log('remote login success', res)
+                      console.log('remote login success', res.data.success)
                       wx.hideLoading()
-                      success && success(this.data.userInfo)
+                      if (res.data.success) {
+                        let {
+                          token,
+                          result
+                        } = res.data
+                        this.data.userInfo = result.userInfo
+                        this.data.locationAuthType = AUTHORIZED
+                        var login = wx.getStorageSync('login') || {}
+                        login.token = token
+                        login.userInfo = result.userInfo
+                        wx.setStorageSync('login', login)
+
+                        success && success(this.data.userInfo)
+                      } else {
+                        wx.showModal({
+                          title: '提示',
+                          content: '网络问题，请稍后再试',
+                          showCancel: false
+                        })
+                        error && error()
+                      }
                     },
                     fail: res => {
                       console.log('remote login fail', res)
@@ -85,7 +102,6 @@ App({
                   });
                 }
               })
-
             }
           })
           console.log(this.data)
@@ -93,24 +109,22 @@ App({
       }
     })
   },
-  doQcloudLogin({
+  getUserInfo({
     success,
     error
   }) {
-    // 调用 qcloud 登陆接口
-    qcloud.login({
-      success: result => {
-        if (result) {
-          let userInfo = result
-          success && success({
-            userInfo
-          })
-        } else {
-          // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
-          this.getUserInfo({
-            success,
-            error
-          })
+    if (userInfo) return userInfo
+  },
+  checkSession({
+    success,
+    error
+  }) {
+    wx.checkSession({
+      success: () => {
+        let login = wx.getStorageSync('login') || (error && error())
+        if (login && login.userInfo) {
+          this.data.userInfo = login.userInfo
+          success && success(this.data.userInfo)
         }
       },
       fail: () => {
@@ -119,5 +133,4 @@ App({
     })
   },
 })
-
 // export const remotHost = "https://shonesinglone.leanapp.cn/";

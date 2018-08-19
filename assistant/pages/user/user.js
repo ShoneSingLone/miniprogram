@@ -1,5 +1,4 @@
 // pages/user/user.js
-// pages/user/user.js
 let app = getApp()
 
 console.log('when get app userInfo:', app.data.userInfo)
@@ -16,9 +15,7 @@ Page({
   onTapLogin: function () {
     console.log('onTaplogin userInfo:', app.data.userInfo)
     app.login({
-      success: ({
-        userInfo
-      }) => {
+      success: (result) => {
         console.log('when login success userInfo:', app.data.userInfo)
         this.setData({
           userInfo: app.data.userInfo,
@@ -30,10 +27,7 @@ Page({
         })
       },
       error: () => {
-        this.setData({
-          locationAuthType: app.data.locationAuthType
-        })
-        this.setData({
+        console.log({
           userInfo: app.data.userInfo,
           locationAuthType: app.data.locationAuthType
         })
@@ -47,9 +41,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-    console.log('onLoad')
-  },
+  onLoad: function (options) {},
 
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -64,7 +56,15 @@ Page({
    */
   onShow: function () {
     console.log('onShow')
-
+    app.checkSession({
+      success: (
+        userInfo
+      ) => {
+        this.setData({
+          userInfo
+        })
+      }
+    })
   },
 
   /**
