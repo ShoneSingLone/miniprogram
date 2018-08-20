@@ -1,9 +1,5 @@
 // pages/home/home.js
-let {
-  remotHost
-} = getApp().data
-
-
+let app = getApp()
 
 Page({
   /**
@@ -21,14 +17,11 @@ Page({
     this.getProductList()
   },
   getProductList() {
-    console.log('remotHost', remotHost);
-    console.time("start");
-
     wx.showLoading({
       title: '商品数据加载中',
     })
     wx.request({
-      url: remotHost,
+      url: app.data.remotHost,
       method: 'POST',
       data: {
         endpoint: 'home',
@@ -46,7 +39,6 @@ Page({
             title: '商品数据加载失败',
           })
         }
-        console.timeEnd("start");
       },
       fail: res => {
         wx.hideLoading()
@@ -78,7 +70,16 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    console.log('onShow')
+    app.checkSession({
+      success: (
+        userInfo
+      ) => {
+        this.setData({
+          userInfo
+        })
+      }
+    })
   },
 
   /**

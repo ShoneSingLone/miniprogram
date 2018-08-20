@@ -9,6 +9,7 @@ const AUTHORIZED = 2
 App({
   data: {
     userInfo: null,
+    token: null,
     remotHost: "",
     locationAuthType: 0
   },
@@ -61,6 +62,7 @@ App({
                 }) => {
                   console.log('wx.login.code', code)
                   // 发送 res.code 到后台换取 openId, sessionKey, unionId
+                  // openId不明文出现在前端
                   wx.request({
                     url: this.data.remotHost,
                     method: 'POST',
@@ -74,17 +76,13 @@ App({
                       console.log('remote login success', res.data.success)
                       wx.hideLoading()
                       if (res.data.success) {
-                        let {
-                          token,
-                          result
-                        } = res.data
-                        this.data.userInfo = result.userInfo
+                        this.data.userInfo = wxUserInfo.userInfo
                         this.data.locationAuthType = AUTHORIZED
-                        var login = wx.getStorageSync('login') || {}
-                        login.token = token
-                        login.userInfo = result.userInfo
+                        let login = wx.getStorageSync('login') || {}
+                        login.token = res.data.token
+                        login.userInfo = wxUserInfo.userInfo
+                        login.wxUserInfo = wxUserInfo
                         wx.setStorageSync('login', login)
-
                         success && success(this.data.userInfo)
                       } else {
                         wx.showModal({
@@ -119,11 +117,17 @@ App({
     success,
     error
   }) {
+    if (this.data.userInfo && this.data.token) {
+      console.log('this.data.userInfo,this.data.token', this.data.userInfo, this.data.token)
+      return success && success(this.data.userInfo)
+    }
     wx.checkSession({
       success: () => {
         let login = wx.getStorageSync('login') || (error && error())
         if (login && login.userInfo) {
           this.data.userInfo = login.userInfo
+          this.data.token = login.token
+          console.log('app checkSession', login)
           success && success(this.data.userInfo)
         }
       },
@@ -132,5 +136,26 @@ App({
       }
     })
   },
+  authority(option, success, error) {
+    option = Object.assign({}, option, {
+      url: this.data.remotHost,
+      header: {
+        'Authorization': this.data.token
+      },
+      method: 'POST',
+      data: option.data,
+    })
+    wx.request({
+      ...option,
+      success: function (result) {
+        if (result.data.success) return success(result.data)
+        error(result)
+      },
+      // 响应错误
+      fail: function (loginResponseError) {
+        error(loginResponseError)
+      },
+    })
+  }
 })
 // export const remotHost = "https://shonesinglone.leanapp.cn/";

@@ -1,3 +1,47 @@
-<!--pages/order/order.wxml-->
-<text>pages/order/order.wxml</text>
-<image src='/images/bg.png' class='bg'></image>
+<!-- pages/order/order.wxml -->
+<image class="bg" src="/images/bg.png"></image>
+<view wx:if="{{!userInfo}}">
+    <view class="unlogin-card">
+        <view class="unlogin-head"></view>
+        <view class="unlogin-info">
+            <view class="unlogin-text">未登录</view>
+            <view class="unlogin-tips">点击微信登录后可方便购物</view>
+        </view>
+    </view>
+    <button wx:if="{{locationAuthType==0}}" class="unlogin-btn" open-type='getUserInfo' bindgetuserinfo='onTapLogin'>
+        微信登录
+    </button>
+    <button wx:if="{{locationAuthType==1}}" class="unlogin-btn" open-type='openSetting' bindopensetting="onTapLogin">
+        授权登录
+    </button>
+</view>
+
+
+<view wx:elif="{{orderList.length > 0}}">
+    <view class="order-head">
+        <image class="order-head-line" src="/images/line-black.png"></image>
+        <view class="order-head-text">已完成</view>
+    </view>
+    <view wx:for="{{orderList}}" wx:for-index="bindex" wx:for-item="order" wx:key="orderid" class="order-block">
+        <view wx:for="{{order.productList}}" wx:key="id" wx:for-item="product" class="order-card">
+            <image class="order-image" mode="widthFix" src="{{products[product.id].image}}"></image>
+            <view class="order-info">
+                {{products[product.id].name}}
+                <view class="order-name">{{products[product.id].name}}</view>
+                <view class="order-price">¥ {{products[product.id].price}}</view>
+            </view>
+            <view class="order-opr">
+                <navigator class="order-btn" url="/pages/add-comment/add-comment?id={{products[product.id].product_id}}&price={{products[product.id].price}}&name={{products[product.id].name}}&image={{products[product.id].image}}">
+                    评价
+                </navigator>
+                <view class="order-count">x{{product.count}}</view>
+            </view>
+        </view>
+    </view>
+</view>
+
+
+<view class="order-empty" wx:else>
+    <image class="empty-image" src="/images/order.png"></image>
+    <view class="empty-text">暂时还没有订单</view>
+</view>

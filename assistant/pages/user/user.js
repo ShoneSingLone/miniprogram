@@ -1,8 +1,5 @@
 // pages/user/user.js
 let app = getApp()
-
-console.log('when get app userInfo:', app.data.userInfo)
-
 Page({
   /**
    * 页面的初始数据
