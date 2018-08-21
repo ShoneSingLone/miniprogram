@@ -52,13 +52,10 @@ Page({
         }
       },
       response => {
-
-        console.log("response", response);
-        console.log("response.result.products", response.result.products);
-        console.log("response.result.orderRecords.orderList", response.result.orderRecords.orderList);
+        console.log("getOrder", response);
         wx.hideLoading()
         this.setData({
-          orderList: response.result.orderRecords.orderList,
+          orderList: response.result.orderList,
           products: response.result.products
         })
       },

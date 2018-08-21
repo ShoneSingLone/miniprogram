@@ -147,8 +147,12 @@ App({
     })
     wx.request({
       ...option,
-      success: function (result) {
-        if (result.data.success) return success(result.data)
+      success: (result) => {
+        if (result.data.success) {
+          return success(result.data)
+        } else {
+          this.requestFail[result.data.tag]()
+        }
         error(result)
       },
       // 响应错误
@@ -156,6 +160,26 @@ App({
         error(loginResponseError)
       },
     })
+  },
+  requestFail: {
+    authorization: function () {
+      wx.checkSession({
+        success: () => {
+          let login = wx.getStorageSync('login') || (error && error())
+          if (login && login.userInfo) {
+            this.data.userInfo = null
+            this.data.token = null
+          }
+        },
+        fail: () => {}
+      })
+
+
+
+
+
+
+    }
   }
 })
 // export const remotHost = "https://shonesinglone.leanapp.cn/";

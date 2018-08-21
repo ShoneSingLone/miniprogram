@@ -125,6 +125,34 @@ Page({
         })
       })
   },
+  updateTrolleyList() {
+    wx.showLoading({
+      title: '同步购物车数据...',
+    })
+    app.authority({
+        data: {
+          endpoint: 'trolley',
+          action: 'updateTrolleyList',
+          productList: this.data.trolleyList
+        }
+      },
+      response => {
+        wx.hideLoading()
+        this.setData({
+          trolleyList: response.result.trolleyRecords.productList,
+          products: response.result.products
+        })
+        this.changeList(this.data.trolleyList)
+      },
+      (error) => {
+        console.log('error', error)
+        wx.hideLoading()
+        wx.showToast({
+          icon: 'none',
+          title: '同步购物车数据失败',
+        })
+      })
+  },
   onTapCheckSingle(event) {
     let trolley = event.currentTarget.dataset.trolley
     let index = event.currentTarget.dataset.index
@@ -191,7 +219,9 @@ Page({
     this.setData({
       isTrolleyEdit: !isTrolleyEdit
     })
-
+    if (isTrolleyEdit) {
+      this.updateTrolleyList()
+    }
   },
   adjustTrolleyProductCount(event) {
     let type = event.currentTarget.dataset.type
@@ -212,6 +242,42 @@ Page({
     })
     this.changeList(this.data.trolleyList)
   },
+  onTapPay() {
+    if (!this.data.trolleyAccount) return
+    this.setData({
+      isTrolleyEdit: false
+    })
+    wx.showLoading({
+      title: '结算中...',
+    })
+
+    app.authority({
+        data: {
+          endpoint: 'order',
+          action: 'addOrder',
+          productList: this.data.trolleyList,
+          trolleyAccount: this.data.trolleyAccount
+        }
+      },
+      response => {
+        wx.hideLoading()
+        debugger
+        this.setData({
+          trolleyList: response.result.productList,
+        })
+        this.changeList(this.data.trolleyList)
+      },
+      (error) => {
+        console.log('error', error)
+        wx.hideLoading()
+        wx.showToast({
+          icon: 'none',
+          title: '结算失败',
+        })
+      })
+
+  },
+
   /**
    * 生命周期函数--监听页面隐藏
    */
