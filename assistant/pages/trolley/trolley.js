@@ -9,22 +9,7 @@ Page({
    */
   data: {
     products: {},
-    trolleyList: [{
-      id: 1,
-      name: '商品1',
-      image: 'https://s3.cn-north-1.amazonaws.com.cn/u-img/product1.jpg',
-      price: 45,
-      source: '海外·瑞典',
-      count: 1,
-      checked: false
-    }, {
-      id: 2,
-      name: '商品2',
-      image: 'https://s3.cn-north-1.amazonaws.com.cn/u-img/product2.jpg',
-      price: 158,
-      source: '海外·新西兰',
-      count: 3,
-    }], // 购物车商品列表
+    trolleyList: [], // 购物车商品列表
     trolleyAccount: 0, // 购物车结算总价
     isTrolleyEdit: true, // 购物车是否处于编辑状态
     isTrolleyTotalCheck: false, // 购物车中商品是否全选
@@ -85,6 +70,7 @@ Page({
       }
     })
   },
+  // checked 和count改变时 需要改变总价
   changeList(trolleyList) {
     let {
       trolleyAccount,
@@ -107,11 +93,9 @@ Page({
       },
       response => {
         console.log("response", response);
-        console.log("response.result.products", response.result.products);
-        console.log("response.result.trolleyRecords.trolleyList", response.result.trolleyRecords.productList);
         wx.hideLoading()
         this.setData({
-          trolleyList: response.result.trolleyRecords.productList,
+          trolleyList: response.result.trolleyList,
           products: response.result.products
         })
         this.changeList(this.data.trolleyList)
@@ -139,7 +123,7 @@ Page({
       response => {
         wx.hideLoading()
         this.setData({
-          trolleyList: response.result.trolleyRecords.productList,
+          trolleyList: response.result.trolleyList,
           products: response.result.products
         })
         this.changeList(this.data.trolleyList)
@@ -197,7 +181,12 @@ Page({
   trolleyComputed(trolleyList) {
     let trolleyAccount = 0,
       isTrolleyTotalCheck = false
-
+    if (trolleyList && trolleyList.length === 0) {
+      return {
+        trolleyAccount,
+        isTrolleyTotalCheck
+      }
+    }
     let trolleyListChecked = trolleyList.filter(trolley => {
       if (trolley.checked) {
         trolleyAccount += this.data.products[trolley.id].price * trolley.count
@@ -228,19 +217,20 @@ Page({
     let trolley = event.currentTarget.dataset.trolley
     let index = event.currentTarget.dataset.index
     let count = parseInt(type)
-    console.log(count)
     trolley.count = parseInt(trolley.count) + count
+    console.log(trolley.count)
     if (trolley.count === 0) {
       this.data.trolleyList.splice(index, 1)
-      console.log(this.data.trolleyList)
     } else {
       this.data.trolleyList[index] = trolley
     }
-
     this.setData({
       trolleyList: this.data.trolleyList
     })
     this.changeList(this.data.trolleyList)
+    if (this.data.trolleyList.length === 0) {
+      this.updateTrolleyList()
+    }
   },
   onTapPay() {
     if (!this.data.trolleyAccount) return
@@ -261,7 +251,6 @@ Page({
       },
       response => {
         wx.hideLoading()
-        debugger
         this.setData({
           trolleyList: response.result.productList,
         })

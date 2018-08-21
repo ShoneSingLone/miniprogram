@@ -38,7 +38,7 @@
 				{
 					"id": 0,
 					"name": "detail",
-					"pathName": "pages/trolley/trolley",
+					"pathName": "pages/order/order",
 					"query": ""
 				}
 			]

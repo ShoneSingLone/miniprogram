@@ -53,7 +53,54 @@ Page({
       }
     });
   },
+  addToTrolley(nav) {
+    let productId = this.data.product.id
+    if (productId) {
+      app.authority({
+          data: {
+            endpoint: 'trolley',
+            action: 'addProductToTrolley',
+            productId,
+            count: 1,
+            checked: true
+          }
+        },
+        response => {
+          console.log(response)
+          wx.navigateTo({
+            url: '/pages/home/home'
+          });
 
+          setTimeout(() => {
+            nav && nav()
+          }, 1000 * 0.5)
+          if (response.success) {
+            wx.showToast({
+              title: '已添加到购物车',
+            })
+
+          } else {
+            wx.showToast({
+              icon: 'none',
+              title: '添加到购物车失败',
+            })
+          }
+        },
+        (error) => {
+          console.log(error)
+          wx.showToast({
+            icon: 'none',
+            title: '添加到购物车失败',
+          })
+        })
+    }
+  },
+  buy() {
+    console.log('buy')
+    wx.navigateTo({
+      url: '/pages/trolley/trolley'
+    });
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
