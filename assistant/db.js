@@ -91,7 +91,7 @@ db.getCollection('product').insertMany({
 });
 
 db.getCollection('order').insert({
-    openid: 'oDusn4x2MJkWV7KO7fnZvl69QwMM',
+    openid: '',
     orderList: [{
             orderid: '1',
             productList: [{
@@ -129,4 +129,17 @@ db.getCollection('order').insert({
             createtime: Date()
         },
     ]
+});
+
+
+db.getCollection('trolley').insert({
+    openid: '',
+    productList: [{
+        id: '2',
+        count: '2'
+    }, {
+        id: '1',
+        count: '2'
+    }],
+    createtime: Date()
 });

@@ -58,6 +58,41 @@ Page({
     });
 
   },
+  addToTrolley(event) {
+    let productId = event.currentTarget.dataset.id
+    if (productId) {
+      app.authority({
+          data: {
+            endpoint: 'trolley',
+            action: 'addProductToTrolley',
+            productId,
+            count: 1,
+            checked: true
+          }
+        },
+        response => {
+          console.log(response)
+          if (response.success) {
+            wx.showToast({
+              title: '已添加到购物车',
+            })
+          } else {
+            wx.showToast({
+              icon: 'none',
+              title: '添加到购物车失败',
+            })
+          }
+        },
+        (error) => {
+          console.log(error)
+          wx.showToast({
+            icon: 'none',
+            title: '添加到购物车失败',
+          })
+        })
+    }
+  },
+
 
   /**
    * 生命周期函数--监听页面初次渲染完成
