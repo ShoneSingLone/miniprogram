@@ -60,13 +60,11 @@ Page({
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: res => {
-
         currentImages = currentImages.concat(res.tempFilePaths)
 
         let end = currentImages.length
         let begin = Math.max(end - 3, 0)
         currentImages = currentImages.slice(begin, end)
-
         this.setData({
           commentImages: currentImages
         })
@@ -74,7 +72,6 @@ Page({
       },
     })
   },
-
   previewImg(event) {
     let target = event.currentTarget
     let src = target.dataset.src
